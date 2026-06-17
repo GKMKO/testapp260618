@@ -12,8 +12,10 @@ import { Hint } from './ui/Hint'
 import { InfoPanel } from './ui/InfoPanel'
 import { TitleScreen } from './ui/TitleScreen'
 import { Loading } from './ui/Loading'
+import { Minimap } from './ui/Minimap'
+import { ControlsLegend } from './ui/ControlsLegend'
 
-// Phase 6: タイトル / InfoPanel / ローディングを追加し、クリック・E キーで解説を開く。
+// Phase 7: ミニマップ（俯瞰）と常設操作レジェンドを追加。
 export default function App() {
   // 再レンダーを避けるため、プレイヤー位置/向き/ドラッグ状態は ref で共有する
   const playerPos = useRef(new THREE.Vector3(...PLAYER.start))
@@ -80,7 +82,13 @@ export default function App() {
       </Canvas>
 
       {/* --- HTML オーバーレイ --- */}
-      {started && !selectedSpot && <Hint spot={activeSpot} onOpen={setSelectedId} />}
+      {started && (
+        <>
+          <Minimap playerPos={playerPos} yawRef={yawRef} activeId={activeId} />
+          <ControlsLegend />
+          {!selectedSpot && <Hint spot={activeSpot} onOpen={setSelectedId} />}
+        </>
+      )}
       <InfoPanel spot={selectedSpot} onClose={() => setSelectedId(null)} />
       {!started && <TitleScreen onStart={() => setStarted(true)} />}
       <Loading />
