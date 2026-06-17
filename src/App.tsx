@@ -14,13 +14,18 @@ import { TitleScreen } from './ui/TitleScreen'
 import { Loading } from './ui/Loading'
 import { Minimap } from './ui/Minimap'
 import { ControlsLegend } from './ui/ControlsLegend'
+import { Joystick } from './ui/Joystick'
+import { useIsMobile } from './hooks/useIsMobile'
 
-// Phase 7: ミニマップ（俯瞰）と常設操作レジェンドを追加。
+// Phase 8: モバイル対応（ジョイスティック / DPR・影品質の分岐 / 簡易案内）。
 export default function App() {
-  // 再レンダーを避けるため、プレイヤー位置/向き/ドラッグ状態は ref で共有する
+  const isMobile = useIsMobile()
+
+  // 再レンダーを避けるため、プレイヤー位置/向き/ドラッグ状態・移動入力は ref で共有する
   const playerPos = useRef(new THREE.Vector3(...PLAYER.start))
   const yawRef = useRef(PLAYER.startYaw)
   const draggingRef = useRef(false)
+  const moveInput = useRef({ x: 0, y: 0 }) // ジョイスティック等の外部移動入力
 
   const [started, setStarted] = useState(false)
   const [activeId, setActiveId] = useState<string | null>(null) // 近接
@@ -61,14 +66,14 @@ export default function App() {
   return (
     <div className="app-root">
       <Canvas
-        shadows
-        dpr={[1, 2]}
+        shadows={!isMobile}
+        dpr={isMobile ? [1, 1.5] : [1, 2]}
         camera={{ position: PLAYER.start, fov: 70, near: 0.1, far: 100 }}
       >
         <color attach="background" args={[SCENE_COLORS.background]} />
         <fog attach="fog" args={[SCENE_COLORS.fog, 16, 48]} />
         <Suspense fallback={null}>
-          <Lighting quality="high" />
+          <Lighting quality={isMobile ? 'low' : 'high'} />
           <Studio />
           <Hotspots activeId={activeId} onSelect={selectFromScene} />
         </Suspense>
@@ -77,6 +82,7 @@ export default function App() {
           playerPos={playerPos}
           yawRef={yawRef}
           draggingRef={draggingRef}
+          moveInput={moveInput}
         />
         <ProximityTracker playerPos={playerPos} onActiveChange={setActiveId} />
       </Canvas>
@@ -85,12 +91,19 @@ export default function App() {
       {started && (
         <>
           <Minimap playerPos={playerPos} yawRef={yawRef} activeId={activeId} />
-          <ControlsLegend />
-          {!selectedSpot && <Hint spot={activeSpot} onOpen={setSelectedId} />}
+          {isMobile ? (
+            <>
+              <div className="mobile-guide">ドラッグで視点 / スティックで移動</div>
+              {!selectedSpot && <Joystick moveRef={moveInput} />}
+            </>
+          ) : (
+            <ControlsLegend />
+          )}
+          {!selectedSpot && <Hint spot={activeSpot} onOpen={setSelectedId} isMobile={isMobile} />}
         </>
       )}
       <InfoPanel spot={selectedSpot} onClose={() => setSelectedId(null)} />
-      {!started && <TitleScreen onStart={() => setStarted(true)} />}
+      {!started && <TitleScreen onStart={() => setStarted(true)} isMobile={isMobile} />}
       <Loading />
     </div>
   )
