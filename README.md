@@ -28,6 +28,23 @@ npm run typecheck  # tsc --noEmit（型チェックのみ）
 
 ---
 
+## 公開（GitHub Pages）
+
+`main` ブランチへの push で、GitHub Actions（`.github/workflows/deploy.yml`）が
+自動ビルドして GitHub Pages に公開します。
+
+- 公開 URL: **https://gkmko.github.io/testapp260618/**
+- プロジェクトサイトはサブパス配信のため、`vite.config.ts` の `BASE_PATH`
+  （= `/testapp260618/`）でアセットの基準パスを合わせています。リポジトリ名変更・
+  独自ドメイン・別ホストに置く場合はここを変更してください。
+- 初回はリポジトリの **Settings → Pages → Build and deployment → Source = "GitHub Actions"**
+  になっている必要があります（ワークフローが自動有効化を試みますが、組織設定で
+  ブロックされる場合は手動で選択してください）。
+
+手動デプロイは Actions タブの「Deploy to GitHub Pages」→ Run workflow からも実行できます。
+
+---
+
 ## 操作方法
 
 **デスクトップ**
