@@ -52,6 +52,15 @@ export const LANDMARKS = {
   greenRoom: [-8, 0, 6] as const,
 } as const
 
+/** ホットスポットの既定値（個別に上書きしたい場合は hotspots.ts の各項目で指定）。 */
+export const HOTSPOT = {
+  defaultActivationRadius: 2.8, // この距離(m)以内に入るとアクティブ＆ヒント表示
+  ringInner: 0.55,
+  ringOuter: 0.78,
+  beamHeight: 2.8,
+  orbHeight: 1.45,
+} as const
+
 /** 3D シーンの構造色（UI 色ではない。UI 色は theme.css を編集）。 */
 export const SCENE_COLORS = {
   background: '#0e0f15',

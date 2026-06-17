@@ -5,8 +5,9 @@ import { SCENE_COLORS, PLAYER } from './data/config'
 import { Lighting } from './three/Lighting'
 import { Studio } from './three/Studio'
 import { CameraRig } from './three/CameraRig'
+import { Hotspots } from './three/Hotspots'
 
-// Phase 3: 一人称の移動・視点操作を追加。
+// Phase 4: データ駆動のホットスポット（パルス発光）を表示。
 export default function App() {
   // 再レンダーを避けるため、プレイヤー位置/向き/ドラッグ状態は ref で共有する
   const playerPos = useRef(new THREE.Vector3(...PLAYER.start))
@@ -24,6 +25,7 @@ export default function App() {
         <fog attach="fog" args={[SCENE_COLORS.fog, 16, 48]} />
         <Lighting quality="high" />
         <Studio />
+        <Hotspots />
         <CameraRig playerPos={playerPos} yawRef={yawRef} draggingRef={draggingRef} />
       </Canvas>
     </div>
