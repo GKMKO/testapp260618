@@ -1,21 +1,21 @@
 import { Canvas } from '@react-three/fiber'
+import { SCENE_COLORS } from './data/config'
+import { Lighting } from './three/Lighting'
+import { Studio } from './three/Studio'
 
-// Phase 1: 基盤確認用の最小シーン。Phase 2 以降でスタジオ空間・カメラ・UI を載せ替える。
+// Phase 2: スタジオ空間を表示。カメラ移動・視点操作は Phase 3 で差し替える。
 export default function App() {
   return (
     <div className="app-root">
-      <Canvas camera={{ position: [0, 1.6, 6], fov: 60 }}>
-        <color attach="background" args={['#0e0f15']} />
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[5, 10, 5]} intensity={1.2} />
-        <mesh position={[0, 1, 0]} castShadow>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color="#00a4ff" />
-        </mesh>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-          <planeGeometry args={[20, 20]} />
-          <meshStandardMaterial color="#22232c" />
-        </mesh>
+      <Canvas
+        shadows
+        dpr={[1, 2]}
+        camera={{ position: [0, 1.6, 8.5], fov: 62, near: 0.1, far: 100 }}
+      >
+        <color attach="background" args={[SCENE_COLORS.background]} />
+        <fog attach="fog" args={[SCENE_COLORS.fog, 16, 48]} />
+        <Lighting quality="high" />
+        <Studio />
       </Canvas>
     </div>
   )
