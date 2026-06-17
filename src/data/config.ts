@@ -26,6 +26,21 @@ export const MOVEMENT_BOUNDS = {
 } as const
 
 /**
+ * プレイヤー（一人称カメラ）の挙動設定。
+ * 数値を上げると速く/感度が高くなる。smoothTime はフレームレート非依存の追従時間（秒）。
+ */
+export const PLAYER = {
+  eyeHeight: 1.6, // 視点の高さ(m)
+  start: [0, 1.6, 8.5] as [number, number, number], // 初期位置（受付付近からステージを向く）
+  startYaw: 0, // 初期の向き（0 = -Z 方向＝ステージ側）
+  moveSpeed: 4.6, // 移動速度(m/s)
+  lookSensitivity: 0.0026, // 視点回転感度(rad/px)
+  pitchLimit: Math.PI / 2 - 0.12, // 上下の見上げ/見下ろし制限(rad)
+  lookSmoothTime: 0.08, // 視点回転のスムージング(秒)：大きいほどヌルッと（酔い防止）
+  moveSmoothTime: 0.1, // 移動の加減速スムージング(秒)
+} as const
+
+/**
  * 主要セットピース（什器）のアンカー座標。
  * hotspots.ts のスポット位置はこれらに合わせて配置している。
  */
