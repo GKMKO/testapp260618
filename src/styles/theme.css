@@ -1,0 +1,35 @@
+/* =============================================================================
+ * テーマ（色）一元管理ファイル
+ * -----------------------------------------------------------------------------
+ * 色を変えたいときは「このファイルの CSS 変数を編集するだけ」で全体に反映されます。
+ * （Three.js シーン内の一部の色は src/data/config.ts / hotspots.ts 側で指定します）
+ * ===========================================================================*/
+
+:root {
+  /* ベース背景・サーフェス */
+  --color-bg: #0e0f15;
+  --color-surface: #161824;
+  --color-surface-2: #1f2230;
+  --color-border: #2c3042;
+
+  /* テキスト */
+  --color-text: #eef1f7;
+  --color-text-muted: #9aa2b8;
+
+  /* ブランド/アクセント（GMO グローバルスタジオ想定の青系） */
+  --color-accent: #00a4ff;
+  --color-accent-2: #6cf0ff;
+  --color-accent-contrast: #051018;
+
+  /* 状態色 */
+  --color-hint-bg: rgba(0, 164, 255, 0.16);
+  --color-overlay: rgba(6, 8, 14, 0.62);
+
+  /* UI 寸法・効果 */
+  --radius: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --blur: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', 'Hiragino Kaku Gothic ProN',
+    Meiryo, sans-serif;
+}
