@@ -35,7 +35,16 @@ export function useKeyboard() {
       const k = KEY_MAP[code]
       if (k) keys.current[k] = value
     }
+    // テキスト入力中（編集フォーム等）はキー移動を無効化する
+    const isTyping = () => {
+      const el = document.activeElement as HTMLElement | null
+      if (!el) return false
+      const tag = el.tagName
+      return tag === 'INPUT' || tag === 'TEXTAREA' || el.isContentEditable
+    }
+
     const onDown = (e: KeyboardEvent) => {
+      if (isTyping()) return
       if (e.code in KEY_MAP) {
         // 矢印キーでのページスクロールを抑止
         if (e.code.startsWith('Arrow')) e.preventDefault()

@@ -1,9 +1,11 @@
 import { useEffect, useRef, type RefObject } from 'react'
 import type * as THREE from 'three'
 import { STUDIO } from '../data/config'
-import { hotspots } from '../data/hotspots'
+import type { HotspotData } from '../data/hotspots'
 
 interface MinimapProps {
+  /** 表示するスポット一覧 */
+  spots: HotspotData[]
   playerPos: RefObject<THREE.Vector3>
   yawRef: RefObject<number>
   /** アクティブスポットの強調（React state なので変化時のみ再構築） */
@@ -19,7 +21,7 @@ const PAD = 12
  * プレイヤー位置/向きは ref を rAF ループで直接読むため React 再レンダーは発生しない。
  * （-Z=ステージ側が上、+Z=受付側が下）
  */
-export function Minimap({ playerPos, yawRef, activeId }: MinimapProps) {
+export function Minimap({ spots, playerPos, yawRef, activeId }: MinimapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -58,7 +60,7 @@ export function Minimap({ playerPos, yawRef, activeId }: MinimapProps) {
       ctx.stroke()
 
       // ホットスポット
-      for (const s of hotspots) {
+      for (const s of spots) {
         const p = toMap(s.position[0], s.position[2])
         const isActive = s.id === activeId
         const col = s.color ?? colAccent
@@ -100,7 +102,7 @@ export function Minimap({ playerPos, yawRef, activeId }: MinimapProps) {
     }
     draw()
     return () => cancelAnimationFrame(raf)
-  }, [activeId])
+  }, [activeId, spots])
 
   return (
     <div className="minimap" aria-hidden="true">

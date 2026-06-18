@@ -105,5 +105,22 @@ export const SCENE_COLORS = {
   accent: '#00a4ff',
 } as const
 
+/**
+ * 編集モードの簡易認証情報。
+ * ⚠️ 注意: これはクライアントサイドの「ゲート」であり本当のセキュリティではありません。
+ *   資格情報はビルド済み JS に含まれ、閲覧・回避が可能です。
+ *   本番で実際の編集者権限を守るには、サーバ側認証＋保存先(CMS/DB)が必要です。
+ */
+export const AUTH = {
+  id: 'admin',
+  pass: 'admin',
+} as const
+
+/** ブラウザ保存のキー（localStorage: 編集内容 / sessionStorage: ログイン状態）。 */
+export const STORAGE = {
+  hotspots: 'gmo-studio.hotspots.v1',
+  auth: 'gmo-studio.auth.v1',
+} as const
+
 /** 描画品質プリセット（Phase 8 でモバイル分岐に使用）。 */
 export type Quality = 'high' | 'low'
