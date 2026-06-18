@@ -1,10 +1,11 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
-import { SCENE_COLORS, PLAYER } from './data/config'
+import { SCENE_COLORS, PLAYER, USE_SCAN_MODEL } from './data/config'
 import { hotspots } from './data/hotspots'
 import { Lighting } from './three/Lighting'
 import { Studio } from './three/Studio'
+import { StudioScan } from './three/StudioScan'
 import { CameraRig } from './three/CameraRig'
 import { Hotspots } from './three/Hotspots'
 import { ProximityTracker } from './three/ProximityTracker'
@@ -66,15 +67,19 @@ export default function App() {
   return (
     <div className="app-root">
       <Canvas
-        shadows={!isMobile}
+        shadows={!isMobile && !USE_SCAN_MODEL}
         dpr={isMobile ? [1, 1.5] : [1, 2]}
-        camera={{ position: PLAYER.start, fov: 70, near: 0.1, far: 100 }}
+        camera={{ position: PLAYER.start, fov: 70, near: 0.1, far: 200 }}
       >
         <color attach="background" args={[SCENE_COLORS.background]} />
-        <fog attach="fog" args={[SCENE_COLORS.fog, 16, 48]} />
+        {/* スキャンは奥行きが大きいのでフォグを遠くに（プリミティブ版は近距離フォグ） */}
+        <fog
+          attach="fog"
+          args={USE_SCAN_MODEL ? [SCENE_COLORS.fog, 45, 160] : [SCENE_COLORS.fog, 16, 48]}
+        />
         <Suspense fallback={null}>
-          <Lighting quality={isMobile ? 'low' : 'high'} />
-          <Studio />
+          <Lighting quality={isMobile ? 'low' : 'high'} scan={USE_SCAN_MODEL} />
+          {USE_SCAN_MODEL ? <StudioScan /> : <Studio />}
           <Hotspots activeId={activeId} onSelect={selectFromScene} />
         </Suspense>
         <CameraRig

@@ -15,15 +15,42 @@ export const STUDIO = {
 } as const
 
 /**
- * プレイヤーが歩ける矩形範囲（壁の内側にマージンを取った AABB）。
- * Phase 3 の移動でこの範囲にクランプする。
+ * 実写スキャン(GLB)を使うか。
+ * - true  : Scaniverse 等の実写スキャンを表示（下記 SCAN）
+ * - false : 従来のプリミティブ製スタジオ（Studio.tsx）
  */
-export const MOVEMENT_BOUNDS = {
+export const USE_SCAN_MODEL = true
+
+/**
+ * 実写スキャン(GLB)の設定。
+ * モデルは public/models/ に置き、GitHub Pages のサブパス配信に対応するため
+ * import.meta.env.BASE_URL 経由で参照する。
+ * 取り込んだテストモデルの元 bbox: min(-16.44,-0.385,-18.21) / max(15.68,8.14,17.39)。
+ * 完全版に差し替える時は url とオフセット/移動範囲(下の SCAN_BOUNDS)を調整するだけ。
+ */
+export const SCAN = {
+  url: import.meta.env.BASE_URL + 'models/studio-scan-test.glb',
+  // 床を y=0・水平中心を原点へ寄せるオフセット（= -中心X, -最小Y, -中心Z）
+  offset: [0.38, 0.385, 0.41] as [number, number, number],
+  scale: 1,
+  doubleSide: true, // 不完全スキャンの裏面抜け対策（両面描画）
+} as const
+
+/** プリミティブ版スタジオの歩ける範囲。 */
+const PRIMITIVE_BOUNDS = {
   minX: -STUDIO.width / 2 + 1.2,
   maxX: STUDIO.width / 2 - 1.2,
   minZ: -STUDIO.depth / 2 + 1.2,
   maxZ: STUDIO.depth / 2 - 1.2,
-} as const
+}
+
+/** スキャン版の歩ける範囲（footprint 内側にマージン。完全版で要再調整）。 */
+const SCAN_BOUNDS = { minX: -13, maxX: 13, minZ: -15, maxZ: 15 }
+
+/**
+ * プレイヤーが歩ける矩形範囲（AABB）。移動時にこの範囲へクランプする。
+ */
+export const MOVEMENT_BOUNDS = USE_SCAN_MODEL ? SCAN_BOUNDS : PRIMITIVE_BOUNDS
 
 /**
  * プレイヤー（一人称カメラ）の挙動設定。
@@ -31,7 +58,8 @@ export const MOVEMENT_BOUNDS = {
  */
 export const PLAYER = {
   eyeHeight: 1.6, // 視点の高さ(m)
-  start: [0, 1.6, 8.5] as [number, number, number], // 初期位置（受付付近からステージを向く）
+  // 初期位置（スキャン版はモデル中心付近からスタート / プリミティブ版は受付付近）
+  start: (USE_SCAN_MODEL ? [0, 1.6, 6] : [0, 1.6, 8.5]) as [number, number, number],
   startYaw: 0, // 初期の向き（0 = -Z 方向＝ステージ側）
   moveSpeed: 4.6, // 移動速度(m/s)
   lookSensitivity: 0.0026, // 視点回転感度(rad/px)
