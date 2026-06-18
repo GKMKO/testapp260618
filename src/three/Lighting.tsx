@@ -2,10 +2,27 @@ import { SCENE_COLORS, type Quality } from '../data/config'
 
 /**
  * スタジオ照明。high/low で影マップ解像度と影の有無を切り替え、モバイルを軽量化する。
+ * scan=true（実写スキャン表示）時はモデルがアンライトのため、最小限の環境光のみにする。
  */
-export function Lighting({ quality = 'high' }: { quality?: Quality }) {
+export function Lighting({
+  quality = 'high',
+  scan = false,
+}: {
+  quality?: Quality
+  scan?: boolean
+}) {
   const enableShadow = quality === 'high'
   const shadowMapSize = quality === 'high' ? 2048 : 1024
+
+  // 実写スキャンはベイク済み（アンライト）。ホットスポット用に控えめな環境光だけ置く。
+  if (scan) {
+    return (
+      <>
+        <hemisphereLight args={['#ffffff', '#888888', 1.0]} />
+        <ambientLight intensity={0.6} />
+      </>
+    )
+  }
 
   return (
     <>
