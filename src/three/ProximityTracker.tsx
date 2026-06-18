@@ -1,10 +1,12 @@
 import { useRef, type RefObject } from 'react'
 import { useFrame } from '@react-three/fiber'
-import * as THREE from 'three'
-import { hotspots } from '../data/hotspots'
+import type * as THREE from 'three'
+import type { HotspotData } from '../data/hotspots'
 import { HOTSPOT } from '../data/config'
 
 interface ProximityTrackerProps {
+  /** 判定対象のスポット一覧 */
+  spots: HotspotData[]
   /** プレイヤー位置（CameraRig が毎フレーム書き込む） */
   playerPos: RefObject<THREE.Vector3>
   /** アクティブスポットが「変化した時だけ」呼ばれる */
@@ -18,6 +20,7 @@ interface ProximityTrackerProps {
  * N フレームごとに最近傍スポットを求め、前回と変わった時のみ onActiveChange を呼ぶ。
  */
 export function ProximityTracker({
+  spots,
   playerPos,
   onActiveChange,
   checkEveryNFrames = 6,
@@ -33,7 +36,7 @@ export function ProximityTracker({
     let bestId: string | null = null
     let bestDist = Infinity
 
-    for (const s of hotspots) {
+    for (const s of spots) {
       const r = s.activationRadius ?? HOTSPOT.defaultActivationRadius
       const dx = p.x - s.position[0]
       const dz = p.z - s.position[2]

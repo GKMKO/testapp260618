@@ -8,7 +8,9 @@ interface HotspotProps {
   spot: HotspotData
   /** 近接でアクティブ（発光・パルスを強める） */
   active?: boolean
-  /** クリック/タップで選択（InfoPanel を開く。Phase 6 で接続） */
+  /** 編集モードで選択中（選択リングを表示） */
+  selected?: boolean
+  /** クリック/タップで選択（view=InfoPanel / edit=編集対象に） */
   onSelect?: (id: string) => void
 }
 
@@ -17,7 +19,7 @@ interface HotspotProps {
  * 床リングの scale+opacity パルス・光の柱・浮遊オーブを emissive で安価に「発光」させる。
  * アニメは useFrame 内で ref を直接ミューテート（setState しないので再レンダー無し）。
  */
-export function Hotspot({ spot, active = false, onSelect }: HotspotProps) {
+export function Hotspot({ spot, active = false, selected = false, onSelect }: HotspotProps) {
   const { gl } = useThree()
   const color = spot.color ?? SCENE_COLORS.accent
 
@@ -110,6 +112,21 @@ export function Hotspot({ spot, active = false, onSelect }: HotspotProps) {
           toneMapped={false}
         />
       </mesh>
+
+      {/* 編集モードの選択ハイライト（白い二重リング） */}
+      {selected && (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.04, 0]} raycast={() => null}>
+          <ringGeometry args={[HOTSPOT.ringOuter + 0.12, HOTSPOT.ringOuter + 0.24, 48]} />
+          <meshBasicMaterial
+            color="#ffffff"
+            transparent
+            opacity={0.95}
+            side={THREE.DoubleSide}
+            toneMapped={false}
+            depthWrite={false}
+          />
+        </mesh>
+      )}
     </group>
   )
 }
